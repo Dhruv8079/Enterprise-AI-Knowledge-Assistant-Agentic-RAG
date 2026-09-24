@@ -64,15 +64,16 @@ MAX_DATA_ROWS: int = 200_000
 # Model catalogue
 # --------------------------------------------------------------------------- #
 LLM_MODELS: list[str] = [
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-flash-latest",
+    "gemini-3-flash-preview",
     "gemini-2.5-flash",
     "gemini-2.5-pro",
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
-    "gemini-1.5-flash",
-    "gemini-1.5-pro",
 ]
 
 GOOGLE_EMBEDDING_MODELS: list[str] = [
+    "models/gemini-embedding-001",
     "models/text-embedding-004",
     "models/embedding-001",
 ]
@@ -96,9 +97,9 @@ EMBEDDING_PROVIDERS: dict[str, list[str]] = {
 # --------------------------------------------------------------------------- #
 # Defaults
 # --------------------------------------------------------------------------- #
-DEFAULT_LLM_MODEL: str = "gemini-2.5-flash"
+DEFAULT_LLM_MODEL: str = "gemini-3.6-flash"
 DEFAULT_EMBEDDING_PROVIDER: str = "Google Gemini"
-DEFAULT_EMBEDDING_MODEL: str = "models/text-embedding-004"
+DEFAULT_EMBEDDING_MODEL: str = "models/gemini-embedding-001"
 DEFAULT_RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
 DEFAULT_CHUNK_SIZE: int = 1000
