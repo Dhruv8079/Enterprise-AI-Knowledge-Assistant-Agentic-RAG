@@ -1,0 +1,44 @@
+# Environment & secrets
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+env*/
+.python-version
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Data (keep directory structure, ignore contents)
+data/uploads/*
+!data/uploads/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/vectorstore/*
+!data/vectorstore/.gitkeep
+data/conversations/*
+!data/conversations/.gitkeep
+data/logs/*
+!data/logs/.gitkeep
+data/app.db
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
