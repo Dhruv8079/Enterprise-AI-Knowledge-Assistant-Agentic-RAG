@@ -66,16 +66,14 @@ MAX_DATA_ROWS: int = 200_000
 LLM_MODELS: list[str] = [
     "gemini-3.6-flash",
     "gemini-3.5-flash",
-    "gemini-flash-latest",
-    "gemini-3-flash-preview",
-    "gemini-2.5-flash",
-    "gemini-2.5-pro",
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-pro-preview",
+    "gemini-3.7-flash",
 ]
 
 GOOGLE_EMBEDDING_MODELS: list[str] = [
     "models/gemini-embedding-001",
-    "models/text-embedding-004",
-    "models/embedding-001",
+    "models/gemini-embedding-2",
 ]
 
 HF_EMBEDDING_MODELS: list[str] = [

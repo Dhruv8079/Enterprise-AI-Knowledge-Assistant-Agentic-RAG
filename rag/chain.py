@@ -82,6 +82,72 @@ class RAGResponse:
     used_hybrid: bool = False
 
 
+def describe_gemini_error(exc: Exception, model: str) -> str:
+    """Return a clear, actionable Gemini error message.
+
+    The original exception text is always appended so debugging information is
+    never hidden from the user or the logs.
+    """
+    raw = str(exc).strip() or exc.__class__.__name__
+    lowered = raw.lower()
+    detail = f"Original error: {raw}"
+
+    if (
+        "api key not valid" in lowered
+        or "api_key_invalid" in lowered
+        or "invalid api key" in lowered
+        or "permission denied" in lowered
+        or "unauthenticated" in lowered
+    ):
+        reason = (
+            "The Google API key is invalid or lacks permission. "
+            "Check GOOGLE_API_KEY in .env or re-enter it in the sidebar."
+        )
+    elif (
+        "no longer available" in lowered
+        or "not found" in lowered
+        or "not_found" in lowered
+        or "unsupported" in lowered
+        or "does not support" in lowered
+    ):
+        reason = (
+            f"The Gemini model '{model}' is unavailable or unsupported. "
+            "Choose a different model in the sidebar or update config/settings.py."
+        )
+    elif (
+        "429" in lowered
+        or "resource_exhausted" in lowered
+        or "resource exhausted" in lowered
+        or "quota" in lowered
+        or "rate limit" in lowered
+    ):
+        reason = (
+            "The Gemini API rate limit or quota was exceeded. "
+            "Wait a moment, switch to a smaller model, or check your quota/plan."
+        )
+    elif (
+        "deadline" in lowered
+        or "timeout" in lowered
+        or "connection" in lowered
+        or "network" in lowered
+        or "unavailable" in lowered
+    ):
+        reason = "The Gemini API could not be reached (network error or timeout)."
+    else:
+        reason = "The Gemini API request failed."
+
+    return f"{reason} (model: {model}). {detail}"
+
+
+def _model_name(llm: Any) -> str:
+    """Best-effort extraction of the configured model name from an LLM object."""
+    for attribute in ("model", "model_name", "model_id"):
+        value = getattr(llm, attribute, None)
+        if isinstance(value, str) and value:
+            return value
+    return "unknown"
+
+
 def build_llm(
     api_key: str | None,
     model: str,
@@ -116,7 +182,7 @@ def build_llm(
             convert_system_message_to_human=False,
         )
     except Exception as exc:  # noqa: BLE001
-        raise LLMConfigurationError(f"Failed to initialise the Gemini model: {exc}") from exc
+        raise LLMConfigurationError(describe_gemini_error(exc, model)) from exc
 
 
 def _message_text(message: Any) -> str:
@@ -338,7 +404,7 @@ class RAGEngine:
         except Exception as exc:  # noqa: BLE001
             logger.exception("LLM invocation failed")
             raise LLMConfigurationError(
-                "The Gemini API request failed. Check your API key, quota and network connection."
+                describe_gemini_error(exc, _model_name(self.llm))
             ) from exc
 
         used_fallback = not answer_text or self._looks_like_fallback(answer_text)
